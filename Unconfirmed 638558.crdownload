@@ -1,0 +1,36 @@
+# Task 1: Start Azure PowerShell Session
+Get-AzContext
+
+# Task 2: Create Resource Group
+New-AzResourceGroup -Name "MyResourceGroup" -Location "EastUS"
+
+# Create Managed Disk Configuration
+$diskConfig = New-AzDiskConfig `
+    -Location "CentralIndia" `
+    -CreateOption Empty `
+    -DiskSizeGB 32 `
+    -AccountType Standard_LRS
+
+# Create Managed Disk
+New-AzDisk `
+    -ResourceGroupName "MyResourceGroup" `
+    -DiskName "MyManagedDisk" `
+    -Disk $diskConfig
+
+# Task 3: Configure Managed Disk
+$disk = Get-AzDisk `
+    -ResourceGroupName "MyResourceGroup" `
+    -DiskName "MyManagedDisk"
+
+# Increase disk size from 32 GB to 64 GB
+$disk.DiskSizeGB = 64
+
+Update-AzDisk `
+    -ResourceGroupName "MyResourceGroup" `
+    -DiskName "MyManagedDisk" `
+    -Disk $disk
+
+# Verify the configuration
+Get-AzDisk `
+    -ResourceGroupName "MyResourceGroup" `
+    -DiskName "MyManagedDisk"
